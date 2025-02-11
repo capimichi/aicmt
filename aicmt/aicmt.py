@@ -20,6 +20,9 @@ def get_diff_max_length():
 def get_api_key():
     return os.getenv("AICMT_API_KEY", "")
 
+def get_remove_chars():
+    return os.getenv("AICMT_REMOVE_CHARS", '`,"').split(",")
+
 def get_git_status_items():
 
     diff_files = []
@@ -100,7 +103,9 @@ Only output the message.
         response = requests.post(f"{get_api_base_url()}/generate", headers=headers, json=data)
         response = response.json().get('response', '')
 
-    stripped_response = response.strip('"')
+    stripped_response = response
+    for char in get_remove_chars():
+        stripped_response = stripped_response.replace(char, "")
     stripped_response = stripped_response.strip()
     
     return stripped_response
@@ -128,6 +133,10 @@ def execute():
             commit_message = f"Deleted {file}"
         elif action == "M" or action == "AM":
             diff = subprocess.getoutput(f"git diff {file}").splitlines()
+            if(len(diff) <= 0):
+                diff.append("File: " + file)
+                with open(file, 'r') as f:
+                    diff += f.readlines()
             diff = "\n".join(diff)
             diff = diff[:get_diff_max_length()]
             commit_message = ask_api(diff)

@@ -13,6 +13,7 @@ def display_help():
     print("AICMT_API_BASE_URL   API base URL to use (default: https://api.openai.com/v1)")
     print("AICMT_DIFF_MAX_LENGTH Max length for diff (default: 500)")
     print("AICMT_API_KEY        API key to use")
+    print("AICMT_REMOVE_CHARS   Characters to remove, separated by comma (default: '`,\"')")
 
 @click.command()
 @click.option('--help', is_flag=True, help='Show this help message')
