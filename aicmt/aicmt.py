@@ -152,6 +152,10 @@ def execute():
 
     status_items = get_git_status_items()
 
+    if(len(status_items) <= 0):
+        print("No changes to commit.")
+        sys.exit(0)
+
     for item in status_items:
         action = item.get("action")
         file = item.get("file")
