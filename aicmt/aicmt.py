@@ -20,8 +20,26 @@ def get_diff_max_length():
 def get_api_key():
     return os.getenv("AICMT_API_KEY", "")
 
-def get_git_status():
-    return subprocess.getoutput("git diff --cached --name-status")
+def get_git_status_items():
+
+    diff_files = []
+    diff_lines = subprocess.getoutput("git diff --cached --name-status").splitlines()
+    for line in diff_lines:
+        action, file = line[:1].strip(), line[2:].strip()
+        diff_files.append(file)
+
+    output_lines = []
+    status_lines = subprocess.getoutput("git status --porcelain").splitlines()
+    for line in status_lines:
+        action, file = line[:2].strip(), line[3:].strip()
+        if file in diff_files:
+            output_lines.append({
+                "action": action,
+                "file": file
+            })
+    
+    return output_lines
+        
 
 def check_api_running():
     if not get_api_key():
@@ -82,16 +100,20 @@ Only output the message.
         response = requests.post(f"{get_api_base_url()}/generate", headers=headers, json=data)
         response = response.json().get('response', '')
 
-    return response.strip('"')
+    stripped_response = response.strip('"')
+    stripped_response = stripped_response.strip()
+    
+    return stripped_response
 
 def execute():
 
     check_api_running()
 
-    status_lines = get_git_status().splitlines()
+    status_items = get_git_status_items()
 
-    for line in status_lines:
-        action, file = line[:2].strip(), line[3:].strip()
+    for item in status_items:
+        action = item.get("action")
+        file = item.get("file")
         commit_message = ""
 
         if action == "R":
@@ -104,15 +126,11 @@ def execute():
             commit_message = f"Added {file}"
         elif action == "D":
             commit_message = f"Deleted {file}"
-        elif action == "M":
-            with open(file, 'r') as f:
-                content = f.read()
-                diff = subprocess.getoutput(f"git diff {file}").splitlines()
-                diff = "\n".join(diff)
-                diff = diff[:get_diff_max_length()]
-                commit_message = ask_api(diff)
-        else:
-            commit_message = f"Unknown action for {file}"
+        elif action == "M" or action == "AM":
+            diff = subprocess.getoutput(f"git diff {file}").splitlines()
+            diff = "\n".join(diff)
+            diff = diff[:get_diff_max_length()]
+            commit_message = ask_api(diff)
         
         if commit_message:
             print(f"Committing: {commit_message}")
