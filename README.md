@@ -32,7 +32,7 @@ AICMT can be configured using environment variables:
 - `AICMT_REMOVE_CHARS`: Characters to remove, separated by comma (default: '`,"'`)
 - `AICMT_PROMPT_TEMPLATE`: Prompt template to use (default: see `aicmt.py`)
 
-For the base url, when source type is `openai`, you can select any Openai compatible API, like OpenRouter, Deepseek, ecc.
+> For the base url, when source type is `openai`, you can select any Openai compatible API, like OpenRouter, Deepseek, ecc.
 
 ### Save configurations
 
