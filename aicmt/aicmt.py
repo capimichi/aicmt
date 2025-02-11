@@ -131,8 +131,8 @@ def execute():
             commit_message = f"Added {file}"
         elif action == "D":
             commit_message = f"Deleted {file}"
-        elif action == "M" or action == "AM":
-            diff = subprocess.getoutput(f"git diff {file}").splitlines()
+        elif action == "M" or action == "AM" or action == "MM":
+            diff = subprocess.getoutput(f"git diff --cached {file}").splitlines()
             if(len(diff) <= 0):
                 diff.append("File: " + file)
                 with open(file, 'r') as f:
