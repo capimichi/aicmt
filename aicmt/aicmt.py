@@ -148,7 +148,7 @@ def ask_api(content):
 def execute():
 
     check_api_running()
-    
+
     check_model_valid()
 
     status_items = get_git_status_items()
@@ -178,6 +178,6 @@ def execute():
             commit_message = ask_api(diff)
         
         if commit_message:
-            print(f"Committing file: {file}\n\nWith message: \"\n{commit_message}\"\n")
+            print(f"Committing file: \"{file}\"\nWith message: \"{commit_message}\"\n\n")
             subprocess.run(["git", "commit", "-m", commit_message, file])
 
