@@ -22,6 +22,18 @@ def get_api_key():
 def get_remove_chars():
     return os.getenv("AICMT_REMOVE_CHARS", '`,"').split(",")
 
+def get_prompt_template():
+    return os.getenv("AICMT_PROMPT_TEMPLATE", """
+Generate a commit message for the following changes. 
+Explains what changes have been made. 
+Do not include any description only the message. 
+Only output the message.
+
+----------
+
+{content}
+""")
+
 def get_git_status_items():
 
     # diff_files = []
@@ -99,16 +111,8 @@ def check_model_valid():
 
 def ask_api(content):
     model = get_model()
-    prompt = f"""
-Generate a commit message for the following changes. 
-Explains what changes have been made. 
-Do not include any description only the message. 
-Only output the message.
-
-----------
-
-{content}
-"""
+    prompt_template = get_prompt_template()
+    prompt = prompt_template.format(content=content)
 
     if get_source_type() == "openai":
         headers = {
