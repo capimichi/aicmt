@@ -28,6 +28,7 @@ Generate a commit message for the following changes.
 Explains what changes have been made. 
 Do not include any description only the message. 
 Only output the message.
+Keep the message under 30 words.
 
 ----------
 
