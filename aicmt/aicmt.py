@@ -178,5 +178,6 @@ def execute():
         
         if commit_message:
             print(f"Committing file: {file}\n\nWith message: \n\n{commit_message}\n")
+
             subprocess.run(["git", "commit", "-m", commit_message, file])
 
