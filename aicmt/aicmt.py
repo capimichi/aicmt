@@ -148,6 +148,7 @@ def ask_api(content):
 def execute():
 
     check_api_running()
+    
     check_model_valid()
 
     status_items = get_git_status_items()
