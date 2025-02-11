@@ -1,3 +1,7 @@
+certifi
+charset-normalizer
 click
+idna
 python-dotenv
 requests
+urllib3
