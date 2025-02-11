@@ -6,62 +6,10 @@ AICMT is a tool that automates the process of generating commit messages using a
 
 ## Installation
 
-### Ubuntu
-
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/capimichi/aicmt.git
-    cd aicmt
-    ```
-
-2. Create a virtual environment and activate it:
-    ```sh
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-
-3. Install the required packages:
-    ```sh
-    pip install -r requirements.txt
-    ```
-
-### Mac
-
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/capimichi/aicmt.git
-    cd aicmt
-    ```
-
-2. Create a virtual environment and activate it:
-    ```sh
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-
-3. Install the required packages:
-    ```sh
-    pip install -r requirements.txt
-    ```
-
-### Windows
-
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/capimichi/aicmt.git
-    cd aicmt
-    ```
-
-2. Create a virtual environment and activate it:
-    ```sh
-    python -m venv venv
-    .\venv\Scripts\activate
-    ```
-
-3. Install the required packages:
-    ```sh
-    pip install -r requirements.txt
-    ```
+Install AICMT using pip:
+```sh
+pip install git+https://github.com/capimichi/aicmt.git
+```
 
 ## Usage
 
@@ -83,6 +31,13 @@ AICMT can be configured using environment variables:
 - `AICMT_API_KEY`: API key to use
 - `AICMT_REMOVE_CHARS`: Characters to remove, separated by comma (default: '`,"'`)
 - `AICMT_PROMPT_TEMPLATE`: Prompt template to use (default: see `aicmt.py`)
+
+### Save configurations
+
+You can export the configurations in the session with the export command:
+```sh
+export AICMT_MODEL=gpt-4o
+```
 
 ## Requirements
 
