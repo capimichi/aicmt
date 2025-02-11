@@ -43,6 +43,13 @@ def get_git_status_items():
     
     return output_lines
         
+def get_file_diff(file):
+    diff = subprocess.getoutput(f"git diff --cached {file}").splitlines()
+    if(len(diff) <= 0):
+        diff.append("File: " + file)
+        with open(file, 'r') as f:
+            diff += f.readlines()
+    return "\n".join(diff)
 
 def check_api_running():
     if not get_api_key():
@@ -132,12 +139,7 @@ def execute():
         elif action == "D":
             commit_message = f"Deleted {file}"
         elif action == "M" or action == "AM" or action == "MM":
-            diff = subprocess.getoutput(f"git diff --cached {file}").splitlines()
-            if(len(diff) <= 0):
-                diff.append("File: " + file)
-                with open(file, 'r') as f:
-                    diff += f.readlines()
-            diff = "\n".join(diff)
+            diff = get_file_diff(file)
             diff = diff[:get_diff_max_length()]
             commit_message = ask_api(diff)
         
