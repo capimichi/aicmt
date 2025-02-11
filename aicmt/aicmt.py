@@ -178,6 +178,6 @@ def execute():
             commit_message = ask_api(diff)
         
         if commit_message:
-            print(f"Committing file: \"{file}\"\nWith message: \"{commit_message}\"\n")
+            print(f"Committing file: \"{file}\"\n")
             subprocess.run(["git", "commit", "-m", commit_message, file])
 
