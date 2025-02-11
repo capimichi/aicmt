@@ -32,11 +32,38 @@ AICMT can be configured using environment variables:
 - `AICMT_REMOVE_CHARS`: Characters to remove, separated by comma (default: '`,"'`)
 - `AICMT_PROMPT_TEMPLATE`: Prompt template to use (default: see `aicmt.py`)
 
+For the base url, when source type is `openai`, you can select any Openai compatible API, like OpenRouter, Deepseek, ecc.
+
 ### Save configurations
 
 You can export the configurations in the session with the export command:
 ```sh
 export AICMT_MODEL=gpt-4o
+```
+
+### Sample Configurations
+
+#### OpenAI
+```sh
+export AICMT_MODEL="gpt-4o-mini"
+export AICMT_SOURCE_TYPE="openai"
+export AICMT_API_BASE_URL="https://api.openai.com/v1"
+export AICMT_API_KEY="your_openai_api_key"
+```
+
+#### Ollama
+```sh
+export AICMT_MODEL="llama3:8b"
+export AICMT_SOURCE_TYPE="ollama"
+export AICMT_API_BASE_URL="http://localhost:11434"
+```
+
+#### OpenRouter
+```sh
+export AICMT_MODEL="gpt-4o-mini"
+export AICMT_SOURCE_TYPE="openai"
+export AICMT_API_BASE_URL="https://openrouter.ai/api/v1"
+export AICMT_API_KEY="your_openrouter_api_key"
 ```
 
 ## Requirements
