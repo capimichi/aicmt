@@ -4,7 +4,6 @@ import subprocess
 import requests
 import json
 
-
 def get_model():
     return os.getenv("AICMT_MODEL", "gpt-4o-mini")
 
@@ -25,26 +24,29 @@ def get_remove_chars():
 
 def get_git_status_items():
 
-    diff_files = []
-    diff_lines = subprocess.getoutput("git diff --cached --name-status").splitlines()
-    for line in diff_lines:
-        action, file = line[:1].strip(), line[2:].strip()
-        diff_files.append(file)
+    # diff_files = []
+    # diff_lines = subprocess.getoutput("git diff --cached --name-status").splitlines()
+    # for line in diff_lines:
+        # action, file = line[:1].strip(), line[2:].strip()
+        # diff_files.append(file)
 
     output_lines = []
     status_lines = subprocess.getoutput("git status --porcelain").splitlines()
     for line in status_lines:
         action, file = line[:2].strip(), line[3:].strip()
-        if file in diff_files:
-            output_lines.append({
-                "action": action,
-                "file": file
-            })
+        # if file in diff_files:
+        output_lines.append({
+            "action": action,
+            "file": file
+        })
     
     return output_lines
         
 def get_file_diff(file):
-    diff = subprocess.getoutput(f"git diff --cached {file}").splitlines()
+    diff1 = subprocess.getoutput(f"git diff --cached {file}").splitlines()
+    diff2 = subprocess.getoutput(f"git diff {file}").splitlines()
+    #set diff as greater of the two
+    diff = diff1 if len(diff1) > len(diff2) else diff2
     if(len(diff) <= 0):
         diff.append("File: " + file)
         with open(file, 'r') as f:
@@ -52,11 +54,10 @@ def get_file_diff(file):
     return "\n".join(diff)
 
 def check_api_running():
-    if not get_api_key():
-        print("API key not found. Please set AICMT_API_KEY environment variable.")
-        sys.exit(1)
-    
     if get_source_type() == "openai":
+        if not get_api_key():
+            print("API key not found. Please set AICMT_API_KEY environment variable.")
+            sys.exit(1)
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {get_api_key()}"
@@ -67,10 +68,33 @@ def check_api_running():
             sys.exit(1)
     elif get_source_type() == "ollama":
         headers = {"Content-Type": "application/json"}
-        response = requests.get(f"{get_api_base_url()}/models", headers=headers)
+        response = requests.get(f"{get_api_base_url()}/api/tags", headers=headers)
         if response.status_code != 200:
             print("API key is invalid or the API is down.")
             sys.exit(1)
+
+def check_model_valid():
+    if get_source_type() == "openai":
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {get_api_key()}"
+        }
+        response = requests.get(f"{get_api_base_url()}/models", headers=headers)
+        models = response.json().get('data', [])
+        model_names = [model.get('id') for model in models]
+        if get_model() not in model_names:
+            print("Model not found.")
+            sys.exit(1)
+    elif get_source_type() == "ollama":
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(f"{get_api_base_url()}/api/tags", headers=headers)
+        models = response.json().get('models', [])
+        model_names = [model.get('model') for model in models]
+
+        if get_model() not in model_names:
+            print("Model not found.")
+            sys.exit(1)
+
             
 
 def ask_api(content):
@@ -107,7 +131,7 @@ Only output the message.
             "prompt": json.dumps(prompt),
             "stream": False
         }
-        response = requests.post(f"{get_api_base_url()}/generate", headers=headers, json=data)
+        response = requests.post(f"{get_api_base_url()}/api/generate", headers=headers, json=data)
         response = response.json().get('response', '')
 
     stripped_response = response
@@ -120,6 +144,7 @@ Only output the message.
 def execute():
 
     check_api_running()
+    check_model_valid()
 
     status_items = get_git_status_items()
 
@@ -145,5 +170,5 @@ def execute():
         
         if commit_message:
             print(f"Committing: {commit_message}")
-            subprocess.run(["git", "commit", "-m", commit_message])
+            subprocess.run(["git", "commit", "-m", commit_message, file])
 
