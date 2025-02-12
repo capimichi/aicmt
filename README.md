@@ -31,6 +31,7 @@ AICMT can be configured using environment variables:
 - `AICMT_API_KEY`: API key to use
 - `AICMT_REMOVE_CHARS`: Characters to remove, separated by comma (default: '`,"'`)
 - `AICMT_PROMPT_TEMPLATE`: Prompt template to use (default: see `aicmt.py`)
+- `AICMT_API_TIMEOUT`: Timeout for API requests in seconds (default: `10`)
 
 > For the base url, when source type is `openai`, you can select any Openai compatible API, like OpenRouter, Deepseek, ecc.
 
